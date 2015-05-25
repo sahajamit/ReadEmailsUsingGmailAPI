@@ -48,6 +48,7 @@ public class GmailAPI {
 	  private final String APP_NAME = "Gmail API Quickstart";
 	  // Email address of the user, or "me" can be used to represent the currently authorized user.
 	  private String USER = "sftestautomation01@gmail.com";
+      private String PASSWORD = "";
 	  // Path to the client_secret.json file downloaded from the Developer Console
 	  private String CLIENT_SECRET_PATH;
 	  
@@ -96,7 +97,7 @@ public class GmailAPI {
     }
 	public List<Map<String,String>> ReadEmail(int count) throws Exception{
         if(!isAuthenticated){
-            this.Authenticate("sftestautomation01@gmail.com","password");
+            this.Authenticate("sftestautomation01@gmail.com",PASSWORD);
         }
 	    boolean flag = credential.refreshToken();
 
@@ -203,7 +204,7 @@ public class GmailAPI {
 
     private String GetTokenFromURL(String url, String Username, String EncodedPassword) throws MalformedURLException{
 		Username = "sftestautomation01@gmail.com";
-		EncodedPassword = "password";
+		EncodedPassword = PASSWORD;
 		String decodedPassword = EncodedPassword;//StringUtils.newStringUtf8(Base64.decodeBase64(EncodedPassword));
         String ChromeDriverPath = "";
 //		if(System.getProperty("os.name").toLowerCase().contains("mac")){
