@@ -18,9 +18,14 @@ import com.google.api.services.gmail.model.MessagePartHeader;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -48,7 +53,7 @@ public class GmailAPI {
 	  private final String APP_NAME = "Gmail API Quickstart";
 	  // Email address of the user, or "me" can be used to represent the currently authorized user.
 	  private String USER = "sftestautomation01@gmail.com";
-      private String PASSWORD = "";
+      private String PASSWORD = "equinox2";
 	  // Path to the client_secret.json file downloaded from the Developer Console
 	  private String CLIENT_SECRET_PATH;
 	  
@@ -62,7 +67,7 @@ public class GmailAPI {
       private JsonFactory jsonFactory;
       private boolean isAuthenticated = false;
 	  
-    public void Authenticate(String Username, String Password) throws Exception {
+    public void authenticate(String username, String password) throws Exception {
 //        CLIENT_SECRET_PATH = System.getProperty("user.dir") + CLIENT_SECRET_PATH;
         httpTransport = new NetHttpTransport();
         jsonFactory = new JacksonFactory();
@@ -79,7 +84,7 @@ public class GmailAPI {
 
         System.out.println("Please open the following URL in your browser then type"
                 + " the authorization code:\n" + url);
-        String tokencode = GetTokenFromURL(url,"","");
+        String tokencode = getTokenFromURL(url,"","");
         // Read code entered by user.
 //	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 //	    String code = br.readLine();
@@ -95,9 +100,9 @@ public class GmailAPI {
                 .setFromTokenResponse(response);
         isAuthenticated = true;
     }
-	public List<Map<String,String>> ReadEmail(int count) throws Exception{
+	public List<Map<String,String>> readEmail(int count) throws Exception{
         if(!isAuthenticated){
-            this.Authenticate("sftestautomation01@gmail.com",PASSWORD);
+            this.authenticate("sftestautomation01@gmail.com",PASSWORD);
         }
 	    boolean flag = credential.refreshToken();
 
@@ -112,29 +117,29 @@ public class GmailAPI {
 //        byte[] emailBytes = Base64.decodeBase64(message2.getRaw());
 	    for (Message message : res.getMessages()) {
             Map<String,String> EmailMap = new HashMap<String,String>();
-            Message message1 = GetSpecificEmail(message.getId().toString());
-            String subject = GetMessageSubject(message1);
+            Message message1 = getSpecificEmail(message.getId().toString());
+            String subject = getMessageSubject(message1);
             EmailMap.put("Id",message.getId().toString());
             System.out.println("Email Subject: \n" + subject);
 //            String Body = GetMessageBody(message1);
 //            System.out.println("Email Body: \n" + Body);
-            EmailMap.put("Subject",GetMessageSubject(message1));
-            EmailMap.put("Body",GetMessageBody(message1));
-            EmailMap.put("From",GetMessageFrom(message1));
-            EmailMap.put("To",GetMessageTo(message1));
-            EmailMap.put("Time",GetMessageTime(message1));
+            EmailMap.put("Subject",getMessageSubject(message1));
+            EmailMap.put("Body",getMessageBody(message1));
+            EmailMap.put("From",getMessageFrom(message1));
+            EmailMap.put("To",getMessageTo(message1));
+            EmailMap.put("Time",getMessageTime(message1));
             EmailList.add(EmailMap);
 //            System.out.println("********************************************************************************************************************");
 	    }
         return EmailList;
 	  }
 	
-	private Message GetSpecificEmail(String id) throws Exception{
+	private Message getSpecificEmail(String id) throws Exception{
 		Message message = Gmailservice.users().messages().get(USER, id).execute();
 		return message;
 	}
 
-    private String GetMessageSubject(Message message) throws Exception{
+    private String getMessageSubject(Message message) throws Exception{
 //		System.out.println(message.toPrettyString());
 	    MessagePart msgpart = message.getPayload();
 	    
@@ -147,7 +152,7 @@ public class GmailAPI {
 		return "";
 	}
 
-    private String GetMessageFrom(Message message) throws Exception{
+    private String getMessageFrom(Message message) throws Exception{
         MessagePart msgpart = message.getPayload();
         List<MessagePartHeader> headers = message.getPayload().getHeaders();
         for(MessagePartHeader header : headers){
@@ -158,7 +163,7 @@ public class GmailAPI {
         return "";
     }
 
-    private String GetMessageTo(Message message) throws Exception{
+    private String getMessageTo(Message message) throws Exception{
         MessagePart msgpart = message.getPayload();
         List<MessagePartHeader> headers = message.getPayload().getHeaders();
         for(MessagePartHeader header : headers){
@@ -169,7 +174,7 @@ public class GmailAPI {
         return "";
     }
 
-    private String GetMessageTime(Message message) throws Exception{
+    private String getMessageTime(Message message) throws Exception{
         MessagePart msgpart = message.getPayload();
         List<MessagePartHeader> headers = message.getPayload().getHeaders();
         for(MessagePartHeader header : headers){
@@ -180,7 +185,7 @@ public class GmailAPI {
         return "";
     }
 
-    private String GetMessageBody(Message message)throws Exception{
+    private String getMessageBody(Message message)throws Exception{
 		String MailBody = "";
         String MailBodyDecoded = "";
 //        message = Gmailservice.users().messages().get(USER, "14d4d4bbd160b7a9").setFormat("raw").execute();
@@ -202,22 +207,32 @@ public class GmailAPI {
 		}
 	}
 
-    private String GetTokenFromURL(String url, String Username, String EncodedPassword) throws MalformedURLException{
-		Username = "sftestautomation01@gmail.com";
-		EncodedPassword = PASSWORD;
-		String decodedPassword = EncodedPassword;//StringUtils.newStringUtf8(Base64.decodeBase64(EncodedPassword));
-        String ChromeDriverPath = "";
+    private String getTokenFromURL(String url, String username, String encodedPassword) throws MalformedURLException{
+		username = "sftestautomation01@gmail.com";
+		encodedPassword = PASSWORD;
+		String decodedPassword = encodedPassword;//StringUtils.newStringUtf8(Base64.decodeBase64(EncodedPassword));
 //		if(System.getProperty("os.name").toLowerCase().contains("mac")){
 //            ChromeDriverPath = System.getProperty("user.dir") + "/tools/ChromeDriver/chromedriver";
 //        }else{
 //            ChromeDriverPath = System.getProperty("user.dir") + "/tools/ChromeDriver/chromedriver.exe";
 //        }
 //		System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
-		WebDriver driver = new ChromeDriver();
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setJavascriptEnabled(true);                //< not really needed: JS enabled by default
+        caps.setCapability("takesScreenshot", true);    //< yeah, GhostDriver haz screenshotz!
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
+        		System.getProperty("user.dir")+"/tools/phantomjs.exe");
+
+        // Launch driver (will take care and ownership of the phantomjs process)
+        WebDriver driver = new PhantomJSDriver(caps);
+//        WebDriver driver = new FirefoxDriver(caps);
+        
+
 		
 		driver.manage().window().maximize();
 		driver.navigate().to(url);
-		driver.findElement(By.id("Email")).sendKeys(Username);
+		driver.findElement(By.id("Email")).sendKeys(username);
+		driver.findElement(By.id("next")).click();;
 		driver.findElement(By.id("Passwd")).sendKeys(decodedPassword);
 		driver.findElement(By.id("signIn")).click();
 		

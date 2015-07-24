@@ -12,8 +12,8 @@ public class GmailAPITest {
             String base_dir = System.getProperty("user.dir");
             System.setProperty("GmailAPI.ClientSecretJson.Path",base_dir + "/tools/client_secret.json");
             System.setProperty("webdriver.chrome.driver",base_dir + "/tools/ChromeDriver/chromedriver");
-            obj.Authenticate("sftestautomation01@gmail.com","password");
-            List<Map<String,String>> EmailList = obj.ReadEmail(5);
+            obj.authenticate("sftestautomation01@gmail.com","password");
+            List<Map<String,String>> EmailList = obj.readEmail(5);
         }catch(Exception e){
             e.printStackTrace();
         }
