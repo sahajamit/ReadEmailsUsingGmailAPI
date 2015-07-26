@@ -207,23 +207,16 @@ public class GmailAPI {
 		}
 	}
 
-    private String getTokenFromURL(String url, String username, String encodedPassword) throws MalformedURLException{
+    private String getTokenFromURL(String url, String username, String encodedPassword) throws MalformedURLException, InterruptedException{
 		username = "sftestautomation01@gmail.com";
 		encodedPassword = PASSWORD;
 		String decodedPassword = encodedPassword;//StringUtils.newStringUtf8(Base64.decodeBase64(EncodedPassword));
-//		if(System.getProperty("os.name").toLowerCase().contains("mac")){
-//            ChromeDriverPath = System.getProperty("user.dir") + "/tools/ChromeDriver/chromedriver";
-//        }else{
-//            ChromeDriverPath = System.getProperty("user.dir") + "/tools/ChromeDriver/chromedriver.exe";
-//        }
-//		System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);                //< not really needed: JS enabled by default
         caps.setCapability("takesScreenshot", true);    //< yeah, GhostDriver haz screenshotz!
         caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
         		System.getProperty("user.dir")+"/tools/phantomjs.exe");
 
-        // Launch driver (will take care and ownership of the phantomjs process)
         WebDriver driver = new PhantomJSDriver(caps);
 //        WebDriver driver = new FirefoxDriver(caps);
         
@@ -232,7 +225,8 @@ public class GmailAPI {
 		driver.manage().window().maximize();
 		driver.navigate().to(url);
 		driver.findElement(By.id("Email")).sendKeys(username);
-		driver.findElement(By.id("next")).click();;
+		driver.findElement(By.id("next")).click();
+		Thread.sleep(5000);
 		driver.findElement(By.id("Passwd")).sendKeys(decodedPassword);
 		driver.findElement(By.id("signIn")).click();
 		
@@ -244,7 +238,8 @@ public class GmailAPI {
 		System.out.println( code.getText() );
 		String accessCode = code.getAttribute("value");
 		System.out.println(accessCode);
-		driver.close();driver.quit();
+		driver.close();
+		driver.quit();
 		return accessCode;
 	}
 }
