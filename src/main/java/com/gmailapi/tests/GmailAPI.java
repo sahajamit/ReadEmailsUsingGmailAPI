@@ -52,8 +52,8 @@ public class GmailAPI {
 	  private final String SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
 	  private final String APP_NAME = "Gmail API Quickstart";
 	  // Email address of the user, or "me" can be used to represent the currently authorized user.
-	  private String USER = "sftestautomation01@gmail.com";
-      private String PASSWORD = "equinox2";
+	  private String USER = "<email>";
+      private String PASSWORD = "<password>";
 	  // Path to the client_secret.json file downloaded from the Developer Console
 	  private String CLIENT_SECRET_PATH;
 	  
@@ -102,7 +102,7 @@ public class GmailAPI {
     }
 	public List<Map<String,String>> readEmail(int count) throws Exception{
         if(!isAuthenticated){
-            this.authenticate("sftestautomation01@gmail.com",PASSWORD);
+            this.authenticate("<email>",PASSWORD);
         }
 	    boolean flag = credential.refreshToken();
 
