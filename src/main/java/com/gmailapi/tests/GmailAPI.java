@@ -208,7 +208,7 @@ public class GmailAPI {
 	}
 
     private String getTokenFromURL(String url, String username, String encodedPassword) throws MalformedURLException, InterruptedException{
-		username = "sftestautomation01@gmail.com";
+		username = "";
 		encodedPassword = PASSWORD;
 		String decodedPassword = encodedPassword;//StringUtils.newStringUtf8(Base64.decodeBase64(EncodedPassword));
         DesiredCapabilities caps = new DesiredCapabilities();
